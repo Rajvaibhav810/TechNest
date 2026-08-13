@@ -1,31 +1,46 @@
 import React, { useEffect, useState } from 'react';
 import { User, Mail, Shield, Calendar, Package } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 
 export default function Profile() {
+  const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState({ orderCount: 0 });
   const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    const fetchProfileData = async () => {
-      try {
-        const [profileRes, ordersRes] = await Promise.all([
-          api.get('/auth/me'),
-          api.get('/orders')
-        ]);
-        setProfile(profileRes.data);
-        setStats({ orderCount: ordersRes.data.length });
-      } catch (err) {
-        console.error('Failed to load profile data', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchProfileData = async () => {
+    try {
+      const ordersRes = await api.get('/orders');
+
+      setProfile(user);
+
+      const ordersData =
+        ordersRes.data?.data?.orders ||
+        ordersRes.data?.data ||
+        ordersRes.data ||
+        [];
+
+      setStats({
+        orderCount: Array.isArray(ordersData) ? ordersData.length : 0
+      });
+    } catch (err) {
+      console.error('Failed to load profile data:', err);
+      setProfile(user);
+      setStats({ orderCount: 0 });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (user) {
     fetchProfileData();
-  }, []);
+  } else {
+    setLoading(false);
+  }
+}, [user]);
 
   if (loading) {
     return (
@@ -45,7 +60,7 @@ export default function Profile() {
         <div className="md:col-span-1">
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 flex flex-col items-center text-center">
             <div className="w-24 h-24 bg-cyan-500/20 text-cyan-400 rounded-full flex items-center justify-center text-4xl font-bold border-2 border-cyan-500/30 mb-4 shadow-[0_0_15px_rgba(6,182,212,0.2)]">
-              {profile.name.charAt(0).toUpperCase()}
+             {profile.name?.charAt(0)?.toUpperCase() || 'U'}
             </div>
             <h2 className="text-xl font-bold text-white">{profile.name}</h2>
             <div className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-800 text-gray-300 border border-gray-700 mt-2">

@@ -1,22 +1,27 @@
 # Dependencies
 node_modules/
+**/node_modules/
 
 # Environment variables
 .env
-client/.env
-server/.env
+.env.*
+!.env.example
 
-# Build outputs
-client/dist/
+# Build files
+dist/
+build/
 
 # Logs
 *.log
 npm-debug.log*
 
-# OS
+# OS files
 .DS_Store
 Thumbs.db
 
-# Editor
+# Editor files
 .vscode/
 .idea/
+
+# Local development
+*.local

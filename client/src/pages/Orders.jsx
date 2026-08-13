@@ -12,15 +12,34 @@ export default function Orders() {
 
   useEffect(() => {
     const fetchOrders = async () => {
-      try {
-        const { data } = await api.get('/orders');
-        setOrders(data);
-      } catch (err) {
-        console.error('Failed to fetch orders', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  try {
+    const response = await api.get('/orders');
+
+    const rawOrders =
+      response.data?.data?.orders ||
+      response.data?.data ||
+      response.data?.orders ||
+      response.data ||
+      [];
+
+    const normalizedOrders = Array.isArray(rawOrders)
+      ? rawOrders.map((order) => ({
+          ...order,
+          status: order.status || order.orderStatus || 'Pending',
+          items: order.items || order.products || [],
+          total: order.total ?? order.totalAmount ?? 0,
+          createdAt: order.createdAt || order.orderDate || new Date().toISOString()
+        }))
+      : [];
+
+    setOrders(normalizedOrders);
+  } catch (err) {
+    console.error('Failed to fetch orders:', err);
+    setOrders([]);
+  } finally {
+    setLoading(false);
+  }
+};
     fetchOrders();
   }, []);
 

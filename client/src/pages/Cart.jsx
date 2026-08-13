@@ -26,10 +26,10 @@ export default function Cart() {
     setLoading(true);
     try {
       const orderItems = items.map(item => ({
-        product: item.product._id,
-        quantity: item.quantity
+      productId: item.product._id,
+      quantity: item.quantity
       }));
-      
+
       const { data } = await api.post('/orders', { items: orderItems });
       clearCart();
       toast.success('Order placed successfully!');

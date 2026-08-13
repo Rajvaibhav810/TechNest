@@ -13,7 +13,7 @@ export default function Home() {
     const fetchFeatured = async () => {
       try {
         const { data } = await api.get('/products?limit=8');
-        setFeatured(data.products || data);
+        setFeatured(data.data?.products || []);
       } catch (err) {
         console.error('Error fetching featured products:', err);
       } finally {

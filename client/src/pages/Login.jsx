@@ -30,7 +30,7 @@ export default function Login() {
     setLoading(true);
     try {
       const { data } = await api.post('/auth/login', formData);
-      login(data.user, data.token);
+      login(data.data.user, data.data.token);
       toast.success('Successfully logged in!');
       navigate(from, { replace: true });
     } catch (err) {

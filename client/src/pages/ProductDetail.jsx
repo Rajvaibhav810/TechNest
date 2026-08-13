@@ -21,7 +21,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const { data } = await api.get(`/products/${id}`);
-        setProduct(data);
+        setProduct(data.data);
       } catch (err) {
         setError(err.response?.data?.message || 'Product not found');
       } finally {
@@ -83,7 +83,7 @@ export default function ProductDetail() {
             </div>
           )}
           <img
-            src={product.imageUrl || 'https://via.placeholder.com/600'}
+            src={product.image || 'https://via.placeholder.com/600'}
             alt={product.name}
             className="w-full h-full object-cover"
           />

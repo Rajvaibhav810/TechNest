@@ -32,7 +32,7 @@ export default function Shop() {
         if (currentSort) url += `sort=${currentSort}&`;
         
         const { data } = await api.get(url);
-        setProducts(data.products || data);
+        setProducts(data.data?.products || []);
       } catch (err) {
         console.error('Error fetching products:', err);
       } finally {
